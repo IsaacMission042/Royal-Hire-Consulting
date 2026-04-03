@@ -1,0 +1,15 @@
+{
+    "name": "royal-hire-consulting",
+    "version": "1.0.0",
+    "description": "Integrated Learning Platform for Royal Hire Consulting",
+    "scripts": {
+        "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+        "install-all": "npm install && npm install --prefix client && npm install --prefix server",
+        "seed": "npm run seed --prefix server",
+        "client-only": "npm run dev --prefix client",
+        "server-only": "npm run dev --prefix server"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
