@@ -27,6 +27,7 @@ import AssignmentManager from '@/components/admin/AssignmentManager';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X as CloseIcon, LogOut } from 'lucide-react';
+import Counter from '@/components/Counter';
 
 export default function AdminDashboard() {
     const { user, logout } = useAuth();
@@ -222,10 +223,10 @@ export default function AdminDashboard() {
                                 <div className="space-y-8">
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                         {[
-                                            { label: "Active Students", value: "124", icon: <Users />, color: "bg-indigo-600" },
-                                            { label: "Total Courses", value: "12", icon: <Book />, color: "bg-blue-600" },
-                                            { label: "New Submissions", value: submissions.filter(s => s.status === 'under review').length.toString(), icon: <Layers />, color: "bg-orange-500" },
-                                            { label: "Certificates Issued", value: "89", icon: <ShieldCheck />, color: "bg-green-600" },
+                                            { label: "Active Students", value: 124, icon: <Users />, color: "bg-indigo-600" },
+                                            { label: "Total Courses", value: 12, icon: <Book />, color: "bg-blue-600" },
+                                            { label: "New Submissions", value: submissions.filter(s => s.status === 'under review').length, icon: <Layers />, color: "bg-orange-500" },
+                                            { label: "Certificates Issued", value: 89, icon: <ShieldCheck />, color: "bg-green-600" },
                                         ].map((stat, i) => (
                                             <motion.div
                                                 key={i}
@@ -238,7 +239,9 @@ export default function AdminDashboard() {
                                                     {stat.icon}
                                                 </div>
                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                                                <h4 className="text-2xl font-black text-gray-900 mt-1">{stat.value}</h4>
+                                                <h4 className="text-2xl font-black text-gray-900 mt-1">
+                                                    <Counter n={stat.value} />
+                                                </h4>
                                             </motion.div>
                                         ))}
                                     </div>
@@ -258,9 +261,9 @@ export default function AdminDashboard() {
                                     {/* Stats Grid */}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         {[
-                                            { label: "Total Submissions", value: submissions.length.toString(), icon: <BookOpen />, color: "bg-blue-600" },
-                                            { label: "Pending Review", value: submissions.filter(s => s.status === 'under review').length.toString(), icon: <AlertCircle />, color: "bg-yellow-500" },
-                                            { label: "Approved Today", value: submissions.filter(s => s.status === 'approved').length.toString(), icon: <CheckCircle />, color: "bg-green-500" },
+                                            { label: "Total Submissions", value: submissions.length, icon: <BookOpen />, color: "bg-blue-600" },
+                                            { label: "Pending Review", value: submissions.filter(s => s.status === 'under review').length, icon: <AlertCircle />, color: "bg-yellow-500" },
+                                            { label: "Approved Today", value: submissions.filter(s => s.status === 'approved').length, icon: <CheckCircle />, color: "bg-green-500" },
                                         ].map((stat, i) => (
                                             <motion.div
                                                 key={i}
@@ -274,7 +277,9 @@ export default function AdminDashboard() {
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                                                    <h4 className="text-3xl font-black text-gray-900">{stat.value}</h4>
+                                                    <h4 className="text-3xl font-black text-gray-900">
+                                                        <Counter n={stat.value} />
+                                                    </h4>
                                                 </div>
                                             </motion.div>
                                         ))}

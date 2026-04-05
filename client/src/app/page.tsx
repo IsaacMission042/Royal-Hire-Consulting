@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { ArrowRight, BookOpen, Clock, Users, GraduationCap, Globe, Shield } from 'lucide-react';
 import api from '@/lib/api';
 import { motion } from 'framer-motion';
+import Counter from '@/components/Counter';
 
 export default function Home() {
   const [modules, setModules] = useState<any[]>([]);
@@ -70,19 +71,27 @@ export default function Home() {
       <div className="bg-purple-800 text-white py-12 border-b border-purple-700">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-purple-700/50">
           <div>
-            <div className="text-4xl font-black text-yellow-400 mb-1">50+</div>
+            <div className="text-4xl font-black text-yellow-400 mb-1">
+              <Counter n={50} suffix="+" />
+            </div>
             <div className="text-xs font-bold uppercase tracking-widest text-purple-300">Certified Courses</div>
           </div>
           <div>
-            <div className="text-4xl font-black text-yellow-400 mb-1">10k+</div>
+            <div className="text-4xl font-black text-yellow-400 mb-1">
+              <Counter n={10} suffix="k+" />
+            </div>
             <div className="text-xs font-bold uppercase tracking-widest text-purple-300">Alumni Network</div>
           </div>
           <div>
-            <div className="text-4xl font-black text-yellow-400 mb-1">98%</div>
+            <div className="text-4xl font-black text-yellow-400 mb-1">
+              <Counter n={98} suffix="%" />
+            </div>
             <div className="text-xs font-bold uppercase tracking-widest text-purple-300">Job Placement</div>
           </div>
           <div>
-            <div className="text-4xl font-black text-yellow-400 mb-1">24/7</div>
+            <div className="text-4xl font-black text-yellow-400 mb-1">
+              <Counter n={24} suffix="/7" />
+            </div>
             <div className="text-xs font-bold uppercase tracking-widest text-purple-300">Student Support</div>
           </div>
         </div>

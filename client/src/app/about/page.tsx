@@ -9,6 +9,7 @@ import {
   CheckCircle,
   ShieldCheck,
 } from "lucide-react";
+import Counter from "@/components/Counter";
 
 export default function About() {
   return (
@@ -56,7 +57,7 @@ export default function About() {
               </div>
 
               {/* Accredited Badge */}
-              <div className="absolute -bottom-10 -right-6 bg-white p-8 rounded-3xl shadow-2xl border border-purple-50 max-w-[280px] group transition-transform hover:-translate-y-2">
+              <div className="relative mt-12 md:mt-0 md:absolute md:-bottom-10 md:-right-6 bg-white p-8 rounded-3xl shadow-2xl border border-purple-50 w-fit mx-auto md:w-auto md:max-w-[280px] group transition-transform md:hover:-translate-y-2">
                 <div className="flex items-start gap-5">
                   <div className="w-14 h-14 bg-purple-700 rounded-2xl flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-purple-200">
                     <Award size={32} />
@@ -111,13 +112,17 @@ export default function About() {
 
               <div className="grid grid-cols-2 gap-8 pt-6">
                 <div className="space-y-1">
-                  <div className="text-4xl font-black text-purple-700">5k+</div>
+                  <div className="text-4xl font-black text-purple-700">
+                    <Counter n={5} suffix="k+" />
+                  </div>
                   <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                     Professionals Trained
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-4xl font-black text-purple-700">98%</div>
+                  <div className="text-4xl font-black text-purple-700">
+                    <Counter n={98} suffix="%" />
+                  </div>
                   <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                     Success Rate
                   </div>
