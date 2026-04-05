@@ -42,7 +42,7 @@ export default function About() {
                 <img
                   src="/founder.jpg"
                   alt="Founder of Royal Hire Consulting"
-                  className="w-full h-full object-cover grayscale transition duration-700 group-hover:grayscale-0 scale-105 group-hover:scale-100"
+                  className="w-full h-full object-cover grayscale-0 md:grayscale transition duration-700 md:group-hover:grayscale-0 scale-105 group-hover:scale-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 via-transparent to-transparent opacity-60"></div>
                 <div className="absolute bottom-10 left-10 text-white">
@@ -103,7 +103,7 @@ export default function About() {
               </p>
 
               <p className="text-gray-600 leading-relaxed">
-                Under the leadership of our founder, **Laughter Irolewe**, we
+                Under the leadership of our founder, *Mrs Clare Onyegbu*, we
                 have evolved into a premier learning and consultancy powerhouse.
                 We focus on producing world-class professionals through
                 structured, results-driven programs that are globally recognized

@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const testRegFlow = async () => {
-    const email = 'laughterirolewe@gmail.com'; // Using the user's SMTP email as recipient for testing
+    const email = 'royalhireconsulting@gmail.com'; // Using the official Royal Hire email for testing
     const baseUrl = 'http://localhost:5000/api';
 
     try {
