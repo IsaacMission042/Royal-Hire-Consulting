@@ -36,7 +36,7 @@ const optionalAuth = (req, res, next) => {
 // @desc    Get enrolled courses for current user (MUST be before /:id)
 router.get('/user/enrolled', auth, async (req, res) => {
     try {
-        if (require('mongoose').connection.readyState !== 1) {
+        if (!req.isDBConnected) {
             console.log(`[TEST MODE] Returning mock enrollment for ${req.user.id}`);
             return res.json([{
                 _id: 'mock_enrollment_1',
@@ -252,7 +252,7 @@ router.post('/choose-course', auth, async (req, res) => {
         const { courseId } = req.body;
 
         // Check if database is connected
-        if (require('mongoose').connection.readyState !== 1) {
+        if (!req.isDBConnected) {
             console.log(`[TEST MODE] Mock enrolling user ${req.user.id} in course ${courseId}`);
             // Simple mock validation
             if (!courseId.startsWith('mock_')) {

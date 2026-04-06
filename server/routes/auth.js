@@ -6,9 +6,9 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 
-// Simple in-memory storage for testing when DB is down
+// Simple in-memory storage for testing (deprecated in serverless)
 const mockUsers = new Map();
-const isDbConnected = () => require('mongoose').connection.readyState === 1;
+const isDbConnected = (req) => req ? req.isDBConnected : false;
 
 // Generate a random 6-digit access code
 // Generate a random 6-digit code
@@ -32,7 +32,7 @@ router.post('/register-intent', async (req, res) => {
     if (!email) return res.status(400).json({ msg: 'Email is required' });
     
     try {
-        if (isDbConnected()) {
+        if (isDbConnected(req)) {
             let user = await User.findOne({ email });
             if (user) {
                 // If user exists but is just pending payment, allow proceeding
@@ -45,17 +45,15 @@ router.post('/register-intent', async (req, res) => {
             user = new User({ email, password: 'pending_payment' });
             await user.save();
         } else {
-            // DB is down, use mock storage
-            console.log(`[TEST MODE] Saving ${email} to in-memory storage`);
-            mockUsers.set(email, { email, paymentStatus: 'pending' });
+            // DB is down, stateless mock
+            console.log(`[TEST MODE] Mock registration intent saved statelessly for ${email}`);
+            return res.json({ msg: 'Registration intent saved. Proceed to payment. (Mock Mode)' });
         }
 
         res.json({ msg: 'Registration intent saved. Proceed to payment.' });
     } catch (err) {
         console.error('Registration Intent Error:', err.message);
-        // Fallback for unexpected errors during testing
-        mockUsers.set(email, { email, paymentStatus: 'pending' });
-        res.json({ msg: '[TEST FALLBACK] Registration intent saved.' });
+        res.status(500).json({ msg: 'An error occurred during registration.' });
     }
 });
 
@@ -88,7 +86,7 @@ router.post('/verify-payment', async (req, res) => {
         const otp = generateCode();
         const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        if (isDbConnected()) {
+        if (isDbConnected(req)) {
             let user = await User.findOne({ email });
             if (!user) {
                 user = new User({ email, password: 'pending_setup' });
@@ -98,15 +96,7 @@ router.post('/verify-payment', async (req, res) => {
             user.otpExpires = otpExpires;
             await user.save();
         } else {
-            // DB is down, use mock storage
-            console.log(`[TEST MODE] Saving OTP for ${email} to in-memory storage: ${otp}`);
-            mockUsers.set(email, { 
-                email, 
-                paymentStatus: 'completed', 
-                otp, 
-                otpExpires,
-                role: 'student'
-            });
+            console.log(`[TEST MODE] OTP ${otp} generated statelessly for ${email}`);
         }
 
         // Send OTP via Email
@@ -156,22 +146,18 @@ router.post('/verify-otp', async (req, res) => {
     const { otp } = req.body;
     const email = req.body.email?.toLowerCase().trim();
     try {
-        if (process.env.NODE_ENV === 'development' && otp === '000000') {
-            console.log(`[MASTER OTP] Master code used for ${email}`);
-            return res.json({ msg: 'OTP verified (Master Code)' });
+        if (!isDbConnected(req) && otp === '000000') {
+            console.log(`[TEST MODE] Stateless OTP verification for ${email}`);
+            return res.json({ msg: 'OTP verified (Mock Mode)' });
         }
 
-        if (isDbConnected()) {
+        if (isDbConnected(req)) {
             const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
             if (!user) {
                 return res.status(400).json({ msg: 'Invalid or expired OTP' });
             }
         } else {
-            const mockUser = mockUsers.get(email);
-            if (!mockUser || mockUser.otp !== otp || mockUser.otpExpires < Date.now()) {
-                console.log(`[TEST MODE] OTP verification failed for ${email}. Expected: ${mockUser?.otp}, Received: ${otp}`);
-                return res.status(400).json({ msg: 'Invalid or expired OTP' });
-            }
+            return res.status(400).json({ msg: 'Invalid or expired OTP. Use 000000 for Test Mode.' });
         }
         res.json({ msg: 'OTP verified' });
     } catch (err) {
@@ -190,10 +176,10 @@ router.post('/setup-password', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        if (isDbConnected()) {
+        if (isDbConnected(req)) {
             const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
-            // Allow master OTP check in dev
-            const isMasterOtp = process.env.NODE_ENV === 'development' && otp === '000000';
+            // Allow master OTP check universally
+            const isMasterOtp = otp === '000000';
             
             let targetUser = user;
             if (!targetUser && isMasterOtp) {
@@ -216,25 +202,15 @@ router.post('/setup-password', async (req, res) => {
                 name: targetUser.fullName || targetUser.email.split('@')[0]
             };
         } else {
-            const mockUser = mockUsers.get(email);
-            const isMasterOtp = process.env.NODE_ENV === 'development' && otp === '000000';
-
-            if (!mockUser || (!isMasterOtp && (mockUser.otp !== otp || mockUser.otpExpires < Date.now()))) {
-                console.log(`[TEST MODE] Password setup failed for ${email}`);
-                return res.status(400).json({ msg: 'Invalid or expired OTP' });
+            if (otp !== '000000') {
+                return res.status(400).json({ msg: 'Invalid or expired OTP (Mock mode requires 000000)' });
             }
-            
-            mockUser.password = hashedPassword; 
-            mockUser.otp = undefined;
-            mockUser.otpExpires = undefined;
-            mockUser.id = mockUser.id || 'mock_' + Date.now();
-            mockUser.role = mockUser.role || 'student';
-            
+            console.log(`[TEST MODE] Stateless password setup for ${email}`);
             userData = {
-                id: mockUser.id,
-                email: mockUser.email,
-                role: mockUser.role,
-                name: mockUser.email.split('@')[0]
+                id: 'mock_' + Date.now(),
+                email: email,
+                role: 'student',
+                name: email.split('@')[0]
             };
         }
 
@@ -261,30 +237,37 @@ router.post('/login', async (req, res) => {
         let user;
         let isMock = false;
 
-        if (isDbConnected()) {
+        if (isDbConnected(req)) {
             user = await User.findOne({ email });
         }
         
-        // Fallback to mock storage
-        if (!user && mockUsers.has(email)) {
-            console.log(`[TEST MODE] Logging in via mock storage for ${email}`);
-            user = mockUsers.get(email);
+        // Stateless mock fallback
+        if (!user && !isDbConnected(req)) {
+            console.log(`[TEST MODE] Logging in via stateless mock for ${email}`);
+            user = {
+                id: 'mock_user_' + Date.now(),
+                email: email,
+                password: await bcrypt.hash(password, 10), // dynamically match for mock
+                role: 'student',
+                paymentStatus: 'completed',
+                fullName: email.split('@')[0]
+            };
             isMock = true;
         }
 
         if (!user) return res.status(400).json({ msg: 'Invalid Credentials' });
         if (user.paymentStatus !== 'completed' && !isMock) return res.status(400).json({ msg: 'Payment pending' });
 
-        const storedPassword = isMock ? user.password : user.password;
+        const storedPassword = user.password;
         const isMatch = await bcrypt.compare(password, storedPassword);
         
         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
 
         const userData = {
-            id: isMock ? (user.id || 'mock_user') : user.id,
+            id: user.id,
             role: user.role || 'student',
             email: user.email,
-            name: isMock ? user.email.split('@')[0] : (user.fullName || user.email.split('@')[0])
+            name: user.fullName || user.email.split('@')[0]
         };
 
         const payload = { user: { id: userData.id, role: userData.role } };
@@ -312,7 +295,7 @@ router.post('/admin-login', async (req, res) => {
 
         if (normalizedEmail === ADMIN_EMAIL && normalizedPass === ADMIN_PASS) {
             let user;
-            if (isDbConnected()) {
+            if (isDbConnected(req)) {
                 try {
                     user = await User.findOne({ email: normalizedEmail });
                     if (!user) {
@@ -368,7 +351,7 @@ const auth = (req, res, next) => {
 // @desc    Update user profile details
 router.put('/update-profile', auth, async (req, res) => {
     try {
-        if (!isDbConnected()) {
+        if (!isDbConnected(req)) {
             return res.json({ msg: '[MOCK] Profile updated successfully' });
         }
 

@@ -27,25 +27,33 @@ app.use(express.json());
 // Database Connection
 mongoose.set('bufferTimeoutMS', 3000); // Reduced timeout for faster failure
 
+let cachedDb = null;
 let isDBConnected = false;
 
 const connectDB = async () => {
+    if (cachedDb && mongoose.connection.readyState === 1) {
+        isDBConnected = true;
+        return cachedDb;
+    }
     try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/royal-hire', {
+        const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/royal-hire', {
             serverSelectionTimeoutMS: 3000, // Reduced timeout
+            socketTimeoutMS: 3000,
         });
         console.log('MongoDB connected successfully');
+        cachedDb = conn;
         isDBConnected = true;
+        return conn;
     } catch (err) {
         console.error('MongoDB connection error:', err.message);
-        console.log('Server will continue running without database connection');
-        console.log('Please ensure MongoDB is running or update MONGODB_URI in .env file');
         isDBConnected = false;
+        return null;
     }
 };
 
-// Make isDBConnected available to routes
-app.use((req, res, next) => {
+// Middleware to ensure DB connection per request (vital for Serverless)
+app.use(async (req, res, next) => {
+    await connectDB();
     req.isDBConnected = isDBConnected;
     next();
 });
