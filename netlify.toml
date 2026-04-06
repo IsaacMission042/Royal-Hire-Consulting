@@ -1,7 +1,14 @@
 [build]
   base = "client"
-  command = "npm run build"
+  command = "npm --prefix ../server install serverless-http && npm run build"
   publish = ".next"
+  functions = "../server/functions"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true

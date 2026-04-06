@@ -76,7 +76,7 @@ router.get('/', optionalAuth, async (req, res) => {
                     _id: 'mock_course_1',
                     title: 'Business Consulting Mastery',
                     description: 'Learn the fundamentals of business consulting.',
-                    price: 499,
+                    price: 3000,
                     level: 'Beginner',
                     thumbnail: '',
                     instructor: { name: 'Royal Hire Team' },
@@ -86,7 +86,7 @@ router.get('/', optionalAuth, async (req, res) => {
                     _id: 'mock_course_2',
                     title: 'Advanced Professional Services',
                     description: 'Deep dive into specialized consulting techniques.',
-                    price: 799,
+                    price: 3000,
                     level: 'Intermediate',
                     thumbnail: '',
                     instructor: { name: 'Dr. Sarah Johnson' },
@@ -121,11 +121,12 @@ router.get('/:id', optionalAuth, async (req, res) => {
                 _id: req.params.id,
                 title: req.params.id === 'mock_course_1' ? 'Business Consulting Mastery' : 'Advanced Professional Services',
                 description: 'Mock course description for testing.',
+                price: 3000,
                 modules: [
-                    { _id: 'mod1', title: 'Introduction', status: 'unlocked' },
-                    { _id: 'mod2', title: 'Consulting Frameworks', status: 'unlocked' }
+                    { _id: 'mod1', title: 'Introduction', status: 'locked' },
+                    { _id: 'mod2', title: 'Consulting Frameworks', status: 'locked' }
                 ],
-                isEnrolled: true
+                isEnrolled: false
             });
         }
         const course = await Course.findById(req.params.id).populate('modules');

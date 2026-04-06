@@ -91,13 +91,9 @@ export default function Dashboard() {
                 >
                   <BookOpen size={18} /> My Courses
                 </Link>
-                <Link
-                  href="input the link for the courses"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-4 rounded-xl text-purple-200/70 hover:bg-purple-800/30 hover:text-white transition font-bold"
-                >
+                <div className="flex items-center gap-3 p-4 rounded-xl text-purple-200/40 cursor-default font-bold">
                   <Award size={18} /> Browse Catalog
-                </Link>
+                </div>
               </nav>
               <div className="p-6 border-t border-purple-800">
                 <button
@@ -143,12 +139,9 @@ export default function Dashboard() {
           >
             <BookOpen size={18} /> My Courses
           </Link>
-          <Link
-            href="input the link for the code"
-            className="flex items-center gap-3 p-4 rounded-xl text-purple-200/70 hover:bg-purple-800/30 hover:text-white transition font-bold"
-          >
+          <div className="flex items-center gap-3 p-4 rounded-xl text-purple-200/40 cursor-default font-bold">
             <Award size={18} /> Browse Catalog
-          </Link>
+          </div>
         </nav>
 
         <div className="p-6 border-t border-purple-800">
@@ -176,12 +169,9 @@ export default function Dashboard() {
               Welcome back, {user?.name || "Student"}
             </p>
           </div>
-          <Link
-            href="/courses"
-            className="hidden md:flex items-center gap-2 text-sm font-bold text-purple-700 hover:text-purple-900"
-          >
+          <div className="hidden md:flex items-center gap-2 text-sm font-bold text-gray-400 cursor-default">
             Browse Courses <ArrowRight size={16} />
-          </Link>
+          </div>
         </header>
 
         <div className="p-10 max-w-6xl mx-auto w-full space-y-10">
@@ -284,12 +274,9 @@ export default function Dashboard() {
                 <p className="text-gray-500 mb-6">
                   Start your learning journey today.
                 </p>
-                <Link
-                  href="/courses"
-                  className="inline-flex items-center px-6 py-3 bg-purple-700 text-white font-bold rounded-xl hover:bg-purple-800 transition"
-                >
-                  Browse Catalog
-                </Link>
+                <div className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-400 font-bold rounded-xl cursor-default">
+                  Catalog Offline
+                </div>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

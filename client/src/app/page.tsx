@@ -166,8 +166,10 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">{course.title}</h3>
                   <p className="text-sm text-gray-500 mb-6 line-clamp-2">{course.description}</p>
                   <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                      <Users size={14} /> 120 Students
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <Users size={14} /> 120 Students
+                      </div>
                     </div>
                     <Link href={`/courses/${course._id}`} className="text-purple-600 text-sm font-black uppercase tracking-widest hover:text-purple-800">
                       View Details &rarr;

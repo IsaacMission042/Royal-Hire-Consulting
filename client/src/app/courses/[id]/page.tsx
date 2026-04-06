@@ -91,7 +91,7 @@ export default function CourseDetailPage() {
                                 </button>
                             )}
                             <div className="text-2xl font-bold">
-                                {course.price === 0 ? 'Free' : `$${course.price}`}
+                                {course.price === 3000 ? '#3000' : course.price === 0 ? 'Free' : `#${course.price}`}
                             </div>
                         </div>
                     </div>
@@ -120,7 +120,11 @@ export default function CourseDetailPage() {
                                     <div className="flex-1">
                                         <h3 className="text-lg font-bold text-gray-900 flex items-center justify-between">
                                             Module {i + 1}: {mod.title}
-                                            {mod.status !== 'locked' && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wide">Unlocked</span>}
+                                            {mod.status === 'locked' ? (
+                                                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full uppercase tracking-wide">Locked</span>
+                                            ) : (
+                                                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wide">Unlocked</span>
+                                            )}
                                         </h3>
                                         <p className="text-gray-500 mt-2 text-sm">{mod.description}</p>
 

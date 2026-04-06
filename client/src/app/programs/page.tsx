@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BookOpen, CheckCircle, Clock, GraduationCap } from 'lucide-react';
@@ -52,10 +53,12 @@ export default function Programs() {
                             <div className="mt-12 p-8 bg-purple-900 rounded-3xl text-white">
                                 <h3 className="text-2xl font-bold mb-4">Enrollment Status</h3>
                                 <p className="text-purple-200 mb-6">Current cohort is now open for registration. Join 500+ professionals starting their journey this month.</p>
-                                <div className="text-3xl font-black mb-6">₦25,000.00 <span className="text-sm font-normal opacity-70">One-time fee</span></div>
-                                <button className="w-full py-4 bg-yellow-400 text-purple-900 font-bold rounded-xl hover:bg-yellow-500 transition shadow-lg">
-                                    Secure Your Seat
-                                </button>
+                                <div className="text-3xl font-black mb-6">₦21,000.00 <span className="text-sm font-normal opacity-70">One-time fee</span></div>
+                                <Link href="/register">
+                                    <button className="w-full py-4 bg-yellow-400 text-purple-900 font-bold rounded-xl hover:bg-yellow-500 transition shadow-lg">
+                                        Secure Your Seat
+                                    </button>
+                                </Link>
                             </div>
                         </div>
 
